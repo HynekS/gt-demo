@@ -127,7 +127,7 @@ const gridToggler = (() => {
     ];
   };
 
-  const sheet = (source, type) => {
+  const appendStyles = (source, type) => {
     const style = document.createElement('style');
     document.head.appendChild(style);
     style.setAttribute('data-gt-type', type);
@@ -138,8 +138,8 @@ const gridToggler = (() => {
     return style.sheet;
   };
 
-  sheet(staticStyles, 'static');
-  sheet(dynamicStyles, 'dynamic');
+  appendStyles(staticStyles, 'static');
+  appendStyles(dynamicStyles, 'dynamic');
 
   const dynamicSheet = document.head.querySelector("[data-gt-type='dynamic']").sheet;
 
@@ -179,7 +179,10 @@ const gridToggler = (() => {
   };
 
   const changeValue = (e) => {
-    config[e.target.name] = Number(e.target.value);
+    const prop = e.target.name;
+    const val = Number(e.target.value);
+    config[prop] = val;
+
     refreshDynamicStyles();
   };
 
