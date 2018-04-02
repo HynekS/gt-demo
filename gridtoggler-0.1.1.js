@@ -1,9 +1,21 @@
 // @ts-check;
 ;
+/**
+ * The wrapper IIFE, being triggered by window 'load' event.
+ */
 const gridToggler = (() => {
-  
+  /**
+   * The core configuration object.
+   * @param {string} targetX Valid DOM selector targeting horizontal grid container.
+   * @param {string} asstargetY Valid DOM selector targeting vertical grid container.
+   * @param {number} gridGapX Distance between horizontal grid guides (px).
+   * @param {number} gridGapY Distance between vertical grid guides (px).
+   * @param {number} gridTiltX Horizontal grid offset (px).
+   * @param {number} gridTiltY Vertical grid offset (px).
+   * @param {string} gridColor Valid CSS color for guides.
+   */
   const config = {
-    targetX: 'body',
+    targetX: '#grid',
     targetY: 'body',
     gridGapX: 30,
     gridGapY: 30,
@@ -15,6 +27,10 @@ const gridToggler = (() => {
   const queryX = document.querySelectorAll(config.targetX);
   const queryY = document.querySelectorAll(config.targetY);
 
+  /**
+   * Returns an array of static CSS rules to be applied on butons and form.
+   * @return {array} A set of static CSS rules.
+   */
   const staticStyles = () => {
     return [
       `.gt {
@@ -86,6 +102,10 @@ const gridToggler = (() => {
     ];
   };
 
+  /**
+   * Returns an array of dynamic CSS rules to be applied on grid target elements.
+   * @return {array} A set of dynamic CSS rules.
+   */
   const dynamicStyles = () => {
     return [
       `.gridX--active {
@@ -127,6 +147,12 @@ const gridToggler = (() => {
     ];
   };
 
+  /**
+   * Creates a </style> element in documents' head and appends given rules to it.
+   * @param {function} source – A function which returns an array of CSS rules.
+   * @param {string} type – A 'data-gt-type' attribute value allowing to query that stylesheet.
+   * @return {object} A single stylesheet.
+   */
   const appendStyles = (source, type) => {
     const style = document.createElement('style');
     document.head.appendChild(style);
@@ -143,7 +169,14 @@ const gridToggler = (() => {
 
   const dynamicSheet = document.head.querySelector("[data-gt-type='dynamic']").sheet;
 
-  const toggle = (query, className, e) => {
+  /**
+   * Toggles classes on given targets.
+   * @param {object} query – A HTML Collection of elements targeted via config object.
+   * @param {string} className – A name of CSS class to be toggled.
+   * @param {object} e – An event object.
+   * @return {function} An IIFE to toggle CSS classes of elements passed in the 'query' param.
+   */
+  const toggleGrid = (query, className, e) => {
     e.target.classList.toggle('gt__btn--active');
     if (!query.length) {
       console.warn(
@@ -151,7 +184,7 @@ const gridToggler = (() => {
         Please, check the config object on top of "gridtoggler.js" file.
         If you think this is a bug, please report.`,
       );
-      return;
+      return false;
     }
     return (() => {
       [...query].forEach((elm) => {
@@ -160,14 +193,26 @@ const gridToggler = (() => {
     })();
   };
 
-  const toggleX = (e) => {
-    toggle(queryX, 'gridX--active', e);
+  /**
+   * Calls the toggleGrid() function with specific params.
+   * @param {object} e – An event object.
+   */
+  const toggleXGrid = (e) => {
+    toggleGrid(queryX, 'gridX--active', e);
   };
 
-  const toggleY = (e) => {
-    toggle(queryY, 'gridY--active', e);
+  /**
+   * Calls the toggleGrid() function with specific params.
+   * @param {object} e – An event object.
+   */
+  const toggleYGrid = (e) => {
+    toggleGrid(queryY, 'gridY--active', e);
   };
 
+  /**
+   * Deletes all rules in a stylesheet being queried by const 'dynamicSheet'.
+   * Then insert modified rules.
+   */
   const refreshDynamicStyles = () => {
     const len = dynamicSheet.cssRules.length;
     for (let i = 0; i < len; i += 1) {
@@ -178,6 +223,11 @@ const gridToggler = (() => {
     });
   };
 
+  /**
+   * Changes the value of given config object property.
+   * Either the key and the value are passed in the event object.
+   * @param {object} e – An event object.
+   */
   const changeValue = (e) => {
     const prop = e.target.name;
     const val = Number(e.target.value);
@@ -204,8 +254,8 @@ const gridToggler = (() => {
                     </div>`;
 
   document.body.insertAdjacentHTML('afterbegin', domString);
-  document.getElementById('gt__Xbtn').addEventListener('click', (e) => { toggleX(e); }, false);
-  document.getElementById('gt__Ybtn').addEventListener('click', (e) => { toggleY(e); }, false);
+  document.getElementById('gt__Xbtn').addEventListener('click', (e) => { toggleXGrid(e); }, false);
+  document.getElementById('gt__Ybtn').addEventListener('click', (e) => { toggleYGrid(e); }, false);
 
   const inputs = document.getElementsByClassName('gt__input-num');
   [...inputs].forEach((elem) => {
