@@ -3,7 +3,7 @@
 /**
  * The wrapper IIFE, being triggered by window 'load' event.
  */
-const gridToggler = (() => {
+window.addEventListener('load', () => {
   /**
    * The core configuration object.
    * @param {string} targetX Valid DOM selector targeting horizontal grid container.
@@ -261,6 +261,4 @@ const gridToggler = (() => {
   [...inputs].forEach((elem) => {
     elem.addEventListener('change', (e) => { changeValue(e); }, false);
   });
-});
-
-window.addEventListener('load', gridToggler, false);
+}, false);
